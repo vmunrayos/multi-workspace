@@ -1,0 +1,27 @@
+{
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"name": "backend-dotnet",
+	"projectType": "application",
+	"sourceRoot": "apps/backend-dotnet",
+	"targets": {
+		"serve": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "apps/backend-dotnet",
+				"command": "dotnet watch run --no-launch-profile",
+				"env": {
+					"ASPNETCORE_URLS": "https://localhost:7100;http://localhost:5100",
+					"ASPNETCORE_ENVIRONMENT": "Development"
+				}
+			}
+		},
+		"build": {
+			"executor": "nx:run-commands",
+			"outputs": ["{workspaceRoot}/dist/apps/backend-dotnet"],
+			"options": {
+				"cwd": "apps/backend-dotnet",
+				"command": "dotnet publish -c Release -o ../../dist/apps/backend-dotnet"
+			}
+		}
+	}
+}

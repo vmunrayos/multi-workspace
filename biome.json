@@ -1,0 +1,31 @@
+{
+	"$schema": "https://biomejs.dev/schemas/latest/schema.json",
+	"formatter": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true
+		}
+	},
+	"organizeImports": {
+		"enabled": true
+	},
+	"files": {
+		"include": [
+			"apps/frontend-nextjs",
+			"apps/frontend-angular1",
+			"apps/frontend-angular2",
+			"tailwind.config.js"
+		],
+		"ignore": [
+			"node_modules",
+			"dist",
+			".angular",
+			".nx",
+			"coverage",
+			"apps/frontend-nextjs/.next"
+		]
+	}
+}

@@ -1,0 +1,102 @@
+<div class="page">
+  <header class="header">
+    <p class="eyebrow">Angular user portal</p>
+    <h1>Resume your application</h1>
+    <p class="subtitle">
+      This screen reads the session cookie issued by the Next.js hub. If there
+      is no session, return to the hub and sign in again.
+    </p>
+    <div
+      class="admin-banner"
+      *ngIf="session() && (fromAdmin() || session()?.role === 'admin')"
+    >
+      <p>
+        Welcome, <strong>{{ adminName() || session()?.name }}</strong>.
+        You are reviewing this case as an administrator.
+      </p>
+      <button type="button" (click)="goToAdminDashboard()">
+        Back to admin dashboard
+      </button>
+    </div>
+  </header>
+
+  <section
+    *ngIf="alertStatus() as currentStatus"
+    class="alert"
+    [class.alert-success]="currentStatus.type === 'success'"
+    [class.alert-error]="currentStatus.type === 'error'"
+  >
+    <div>
+      <strong class="alert-title">
+        {{ currentStatus.type === 'success' ? 'Success' : 'Warning' }}
+      </strong>
+      <p>{{ currentStatus.message }}</p>
+    </div>
+    <button type="button" class="alert-dismiss" (click)="clearStatus()">
+      Close
+    </button>
+  </section>
+
+  <section class="flex justify-center">
+    <div class="card navigation">
+      <h2>Session overview</h2>
+
+      <ng-container *ngIf="!checking(); else loadingState">
+        <dl *ngIf="session(); else noSession" class="session-details">
+          <div>
+            <dt>User</dt>
+            <dd>{{ session()?.id }}</dd>
+          </div>
+          <div>
+            <dt>Name</dt>
+            <dd>{{ session()?.name }}</dd>
+          </div>
+          <div>
+            <dt>Role</dt>
+            <dd class="badge">{{ session()?.role }}</dd>
+          </div>
+          <div>
+            <dt>Phone</dt>
+            <dd>{{ session()?.phoneNumber || '—' }}</dd>
+          </div>
+          <div>
+            <dt>Email</dt>
+            <dd>{{ session()?.email || '—' }}</dd>
+          </div>
+        </dl>
+
+        <ng-template #noSession>
+          <p class="empty">
+            No active session. Return to the Next.js hub and complete the OTP
+            flow to proceed.
+          </p>
+        </ng-template>
+      </ng-container>
+
+      <ng-template #loadingState>
+        <p class="empty">Checking session…</p>
+      </ng-template>
+
+      <button
+        type="button"
+        class="ghost"
+        (click)="logout()"
+        [disabled]="!session() || loading()"
+      >
+        Log out
+      </button>
+    </div>
+  </section>
+
+  <section class="card navigation">
+    <h2>Navigate between apps</h2>
+    <div class="nav-links">
+      <a class="nav-link" [href]="hubUrl"> ⬅ Back to hub (Next.js) </a>
+      <a class="nav-link" [href]="adminUrl"> Admin dashboard </a>
+    </div>
+    <p class="nav-note">
+      These links open the other applications in the suite. Because they share
+      the session cookie, the user stays authenticated while navigating.
+    </p>
+  </section>
+</div>

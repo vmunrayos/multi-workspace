@@ -1,0 +1,150 @@
+<div class="page">
+  <header class="header">
+    <p class="eyebrow">Angular admin portal</p>
+    <h1>Manage applications and jump into the user flow</h1>
+    <p class="subtitle">
+      Sign in against the .NET backend using the administrator credentials. All
+      actions reuse the session cookie, so you can switch to the user portal
+      without re-entering credentials.
+    </p>
+  </header>
+
+  <section *ngIf="status() as currentStatus" class="alert" [class.alert-success]="currentStatus.type === 'success'" [class.alert-error]="currentStatus.type === 'error'">
+    <div>
+      <strong class="alert-title">
+        {{ currentStatus.type === 'success' ? 'Success' : 'Warning' }}
+      </strong>
+      <p>{{ currentStatus.message }}</p>
+    </div>
+    <button type="button" class="alert-dismiss" (click)="clearStatus()">Close</button>
+  </section>
+
+  <section class="grid">
+    <form class="card" [formGroup]="form" (ngSubmit)="submit()">
+      <h2>Administrator login</h2>
+      <p class="card-subtitle">
+        Use the credentials from the brief:
+        <code>admin@example.com</code> / <code>SuperSecure123!</code>.
+      </p>
+
+      <label class="field">
+        <span>Email</span>
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="admin@example.com"
+        />
+      </label>
+
+      <label class="field">
+        <span>Password</span>
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="••••••••••••"
+        />
+      </label>
+
+      <button type="submit" class="primary" [disabled]="form.invalid || loading() || !!session()">
+        {{ loading() ? 'Signing in…' : 'Sign in' }}
+      </button>
+    </form>
+
+      <div class="card">
+        <h2>Session overview</h2>
+
+        <ng-container *ngIf="!checking(); else loadingState">
+          <div *ngIf="session(); else noSession" class="session-details">
+            <div>
+              <dt>Name</dt>
+              <dd>{{ session()?.name }}</dd>
+            </div>
+            <div>
+              <dt>Email</dt>
+              <dd>{{ session()?.email || '—' }}</dd>
+            </div>
+            <div>
+              <dt>Role</dt>
+              <dd class="badge">{{ session()?.role }}</dd>
+            </div>
+          </div>
+
+          <ng-template #noSession>
+            <p class="empty">
+              No admin session detected. Sign in to manage the applications.
+            </p>
+          </ng-template>
+        </ng-container>
+
+        <ng-template #loadingState>
+          <p class="empty">Checking session…</p>
+        </ng-template>
+
+        <button
+          type="button"
+          class="ghost"
+          (click)="logout()"
+          [disabled]="!session() || loading()"
+        >
+          Log out
+        </button>
+      </div>
+    </section>
+
+    <section class="card apps">
+      <div class="apps-header">
+        <h2>Registered applications</h2>
+        <p class="card-subtitle">
+          Click “Open user app” to continue with the same session.
+        </p>
+      </div>
+
+      <div class="apps-table" role="table">
+        <div class="apps-table__header" role="row">
+          <span role="columnheader">Applicant</span>
+          <span role="columnheader">Product</span>
+          <span role="columnheader">Stage</span>
+          <span role="columnheader">Updated</span>
+          <span role="columnheader" class="sr-only">Actions</span>
+        </div>
+        <div
+          class="apps-table__row"
+          role="row"
+          *ngFor="let application of applications"
+        >
+          <span role="cell">{{ application.applicantName }}</span>
+          <span role="cell">{{ application.product }}</span>
+          <span role="cell">{{ application.stage }}</span>
+          <span role="cell">
+            {{ application.lastUpdated | date: 'medium' }}
+          </span>
+          <span role="cell">
+            <button
+              type="button"
+              class="table-link"
+              [disabled]="!session() || session()?.role !== 'admin'"
+              (click)="openApplication(application)"
+            >
+              Open user app
+            </button>
+          </span>
+        </div>
+    </div>
+  </section>
+
+  <section class="card navigation">
+    <h2>Navigation</h2>
+    <div class="nav-links">
+      <a class="nav-link" [href]="userAppUrl">
+        ⬅ Go to user app
+      </a>
+      <a class="nav-link" [href]="hubUrl">
+        Back to Next.js hub
+      </a>
+    </div>
+    <p class="nav-note">
+      These links open the other applications in the suite. Because they share
+      the session cookie, the user stays authenticated while navigating.
+    </p>
+  </section>
+</div>

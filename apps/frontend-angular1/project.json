@@ -1,0 +1,92 @@
+{
+	"name": "frontend-angular1",
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"projectType": "application",
+	"prefix": "app",
+	"sourceRoot": "apps/frontend-angular1/src",
+	"tags": [],
+	"targets": {
+		"build": {
+			"executor": "@angular/build:application",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"outputPath": "dist/apps/frontend-angular1",
+				"browser": "apps/frontend-angular1/src/main.ts",
+				"polyfills": ["zone.js"],
+				"tsConfig": "apps/frontend-angular1/tsconfig.app.json",
+				"assets": [
+					{
+						"glob": "**/*",
+						"input": "apps/frontend-angular1/public"
+					}
+				],
+				"styles": ["apps/frontend-angular1/src/styles.css"]
+			},
+			"configurations": {
+				"production": {
+					"budgets": [
+						{
+							"type": "initial",
+							"maximumWarning": "500kb",
+							"maximumError": "1mb"
+						},
+						{
+							"type": "anyComponentStyle",
+							"maximumWarning": "4kb",
+							"maximumError": "8kb"
+						}
+					],
+					"outputHashing": "all",
+					"fileReplacements": [
+						{
+							"replace": "apps/frontend-angular1/src/environments/environment.ts",
+							"with": "apps/frontend-angular1/src/environments/environment.prod.ts"
+						}
+					]
+				},
+				"development": {
+					"optimization": false,
+					"extractLicenses": false,
+					"sourceMap": true,
+					"fileReplacements": []
+				}
+			},
+			"defaultConfiguration": "production"
+		},
+		"serve": {
+			"continuous": true,
+			"executor": "@angular/build:dev-server",
+			"configurations": {
+				"production": {
+					"buildTarget": "frontend-angular1:build:production"
+				},
+				"development": {
+					"buildTarget": "frontend-angular1:build:development"
+				}
+			},
+			"defaultConfiguration": "development"
+		},
+		"extract-i18n": {
+			"executor": "@angular/build:extract-i18n",
+			"options": {
+				"buildTarget": "frontend-angular1:build"
+			}
+		},
+		"lint": {
+			"executor": "nx:run-commands",
+			"outputs": [],
+			"options": {
+				"command": "bunx biome check apps/frontend-angular1"
+			}
+		},
+		"serve-static": {
+			"continuous": true,
+			"executor": "@nx/web:file-server",
+			"options": {
+				"buildTarget": "frontend-angular1:build",
+				"staticFilePath": "dist/apps/frontend-angular1/browser",
+				"spa": true
+			}
+		}
+	}
+}
